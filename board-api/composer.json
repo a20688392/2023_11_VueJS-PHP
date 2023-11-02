@@ -12,5 +12,20 @@
         "psr-4": {
             "App\\": "src/"
         }
+    },
+    "scripts": {
+        "dev": [
+            "phpcs --config-set colors 1",
+            "phpcs --config-set default_standard PSR12"
+        ],
+        "lint": [
+            "phpcs --standard=psr12 -p src/"
+        ],
+        "lint:save": [
+            "phpcbf --standard=psr12 -p src/"
+        ],
+        "lint:report": [
+            "phpcs --standard=psr12 -p -s --report=gitblame src/"
+        ]
     }
 }
