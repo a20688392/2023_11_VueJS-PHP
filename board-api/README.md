@@ -5,6 +5,14 @@
 composer install
 ```
 
+### 複製資料庫設定檔
+```sh
+cd src/Config
+cp Database.php.example Database.php
+# 在修改成自己的資料庫資訊
+```
+
+
 ### 設置檢查規範
 ```sh
 composer dev
