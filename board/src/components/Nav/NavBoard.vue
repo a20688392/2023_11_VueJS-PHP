@@ -1,12 +1,36 @@
-<script setup></script>
+<script setup>
+import { reactive, onMounted } from 'vue'
+const state = reactive({
+  //使用者資訊
+  /**
+   * name 使用者名
+   * check_name 是為了在Header.vue確認改變名字
+   * email 使用者信箱
+   * password 暫存密碼，送出後銷毀
+   * user_id 使用者ID
+   */
+  user: {
+    name: '',
+    check_name: 'none',
+    email: '',
+    password: '',
+    user_id: ''
+  }
+})
+
+onMounted(() => {
+  console.log('mounted!')
+})
+</script>
+
 <template>
   <nav class="header-nav balance">
-    <a class="navbar-brand" href="#">CMRDB-Board</a>
-    <div class="balance">
+    <a class="navbar-brand" href="#">CMRDB-Board {{ state.user.user_id != '' }}</a>
+    <div class="balance" v-if="state.user.user_id != ''">
       <img class="head-img" src="../../assets/logo.svg" />
       <li class="nav-item dropdown">
         <a
-          class="dropdown-toggle head-profile"
+          class="dropdown-toggle text-white text-decoration-none mx-4 py-3"
           href="#"
           id="navbarDropdown"
           role="button"
@@ -22,7 +46,114 @@
         </ul>
       </li>
     </div>
+    <div class="balance" v-else>
+      <button
+        class="btn btn-light mx-4"
+        data-bs-toggle="modal"
+        data-bs-target="#loginModalUI"
+        aria-hidden="true"
+      >
+        登入 / 註冊
+      </button>
+    </div>
   </nav>
+  <!-- Login Modal -->
+  <div
+    class="modal fade"
+    id="loginModalUI"
+    tabindex="-1"
+    aria-labelledby="loginModalLabelUI"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <form>
+          <div class="modal-header justify-content-center">
+            <h5 class="modal-title" id="loginModalLabel">登入</h5>
+          </div>
+          <div class="d-flex justify-content-center align-items-center py-2">
+            <label for="inputAccount" class="d-flex col-3 justify-content-center">帳號名</label>
+            <div class="col-sm-6">
+              <input type="password" class="form-control" id="inputAccount" />
+            </div>
+          </div>
+          <div class="d-flex justify-content-center align-items-center py-2">
+            <label for="inputPassword" class="d-flex col-3 justify-content-center">密碼</label>
+            <div class="col-sm-6">
+              <input type="password" class="form-control" id="inputPassword" />
+            </div>
+          </div>
+          <div class="d-flex justify-content-evenly align-items-center py-3">
+            <!-- <button class="btn btn-primary" data-bs-target="#registerModal" data-bs-toggle="modal">
+              尚未有帳戶?
+            </button> -->
+            <a
+              class="text-primary text-decoration-none"
+              data-bs-target="#registerModalUI"
+              data-bs-toggle="modal"
+            >
+              尚未有帳戶?
+            </a>
+            <button type="submit" class="btn btn-primary px-5" data-bs-dismiss="modal">登入</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- Register Modal -->
+  <div
+    class="modal fade"
+    id="registerModalUI"
+    tabindex="-1"
+    aria-labelledby="registerModalUI"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <form>
+          <div class="modal-header justify-content-center">
+            <h5 class="modal-title" id="loginModalLabel">註冊</h5>
+          </div>
+          <div class="d-flex justify-content-center align-items-center py-2">
+            <label for="inputAccount" class="d-flex col-3 justify-content-center">帳號名</label>
+            <div class="col-sm-6">
+              <input type="password" class="form-control" id="inputAccount" />
+            </div>
+          </div>
+          <div class="d-flex justify-content-center align-items-center py-2">
+            <label for="inputPassword" class="d-flex col-3 justify-content-center">信箱</label>
+            <div class="col-sm-6">
+              <input type="password" class="form-control" id="inputPassword" />
+            </div>
+          </div>
+          <div class="d-flex justify-content-center align-items-center py-2">
+            <label for="inputPassword" class="d-flex col-3 justify-content-center">密碼</label>
+            <div class="col-sm-6">
+              <input type="password" class="form-control" id="inputPassword" />
+            </div>
+          </div>
+          <div class="d-flex justify-content-center align-items-center py-2">
+            <label for="inputPassword" class="d-flex col-3 justify-content-center">再次密碼</label>
+            <div class="col-sm-6">
+              <input type="password" class="form-control" id="inputPassword" />
+            </div>
+          </div>
+          <div class="d-flex justify-content-evenly align-items-center py-3">
+            <div>
+              <a
+                class="text-primary text-decoration-none"
+                data-bs-target="#loginModalUI"
+                data-bs-toggle="modal"
+              >
+                已經有帳戶?
+              </a>
+            </div>
+            <button type="submit" class="btn btn-primary px-5" data-bs-dismiss="modal">註冊</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style>
@@ -35,12 +166,7 @@
   border-radius: 100%;
   width: 3rem;
 }
-.head-profile{
-  padding: 1rem;
-  color: aliceblue;
-  text-decoration: none;
-}
-.balance{
+.balance {
   display: flex;
   align-items: center;
   justify-content: space-between;
