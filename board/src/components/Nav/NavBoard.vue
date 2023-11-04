@@ -1,22 +1,15 @@
 <script setup>
-import { reactive, onMounted } from 'vue'
-const state = reactive({
-  //使用者資訊
-  /**
-   * name 使用者名
-   * check_name 是為了在Header.vue確認改變名字
-   * email 使用者信箱
-   * password 暫存密碼，送出後銷毀
-   * user_id 使用者ID
-   */
-  user: {
-    name: '',
-    check_name: 'none',
-    email: '',
-    password: '',
-    user_id: ''
-  }
-})
+import { onMounted } from 'vue'
+import { useUserStore } from '@/stores/user'
+
+import { storeToRefs } from 'pinia'
+
+const userStore = useUserStore();
+const { user } = storeToRefs(userStore);
+
+const register = () => {
+  userStore.register();
+}
 
 onMounted(() => {
   console.log('mounted!')
@@ -24,9 +17,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <nav class="header-nav balance">
-    <a class="navbar-brand" href="#">CMRDB-Board {{ state.user.user_id != '' }}</a>
-    <div class="balance" v-if="state.user.user_id != ''">
+  <nav class="header-nav d-flex justify-content-between align-items-center">
+    <a class="navbar-brand" href="#">CMRDB-Board {{ user.user_id != '' }}</a>
+    <div class="balance" v-if="user.user_id != ''">
       <img class="head-img" src="../../assets/logo.svg" />
       <li class="nav-item dropdown">
         <a
@@ -46,7 +39,7 @@ onMounted(() => {
         </ul>
       </li>
     </div>
-    <div class="balance" v-else>
+    <div class="d-flex justify-content-between align-items-center" v-else>
       <button
         class="btn btn-light mx-4"
         data-bs-toggle="modal"
@@ -74,19 +67,16 @@ onMounted(() => {
           <div class="d-flex justify-content-center align-items-center py-2">
             <label for="inputAccount" class="d-flex col-3 justify-content-center">帳號名</label>
             <div class="col-sm-6">
-              <input type="password" class="form-control" id="inputAccount" />
+              <input type="text" class="form-control" id="inputAccount" v-model="user.account" />
             </div>
           </div>
           <div class="d-flex justify-content-center align-items-center py-2">
             <label for="inputPassword" class="d-flex col-3 justify-content-center">密碼</label>
             <div class="col-sm-6">
-              <input type="password" class="form-control" id="inputPassword" />
+              <input type="password" class="form-control" id="inputPassword" v-model="user.pass" />
             </div>
           </div>
           <div class="d-flex justify-content-evenly align-items-center py-3">
-            <!-- <button class="btn btn-primary" data-bs-target="#registerModal" data-bs-toggle="modal">
-              尚未有帳戶?
-            </button> -->
             <a
               class="text-primary text-decoration-none"
               data-bs-target="#registerModalUI"
@@ -110,32 +100,37 @@ onMounted(() => {
   >
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
-        <form>
+        <form @submit.prevent="register()">
           <div class="modal-header justify-content-center">
             <h5 class="modal-title" id="loginModalLabel">註冊</h5>
           </div>
           <div class="d-flex justify-content-center align-items-center py-2">
             <label for="inputAccount" class="d-flex col-3 justify-content-center">帳號名</label>
             <div class="col-sm-6">
-              <input type="password" class="form-control" id="inputAccount" />
+              <input type="text" class="form-control" id="inputAccount" v-model="user.account" />
             </div>
           </div>
           <div class="d-flex justify-content-center align-items-center py-2">
             <label for="inputPassword" class="d-flex col-3 justify-content-center">信箱</label>
             <div class="col-sm-6">
-              <input type="password" class="form-control" id="inputPassword" />
+              <input type="text" class="form-control" id="inputPassword" v-model="user.email" />
             </div>
           </div>
           <div class="d-flex justify-content-center align-items-center py-2">
             <label for="inputPassword" class="d-flex col-3 justify-content-center">密碼</label>
             <div class="col-sm-6">
-              <input type="password" class="form-control" id="inputPassword" />
+              <input type="password" class="form-control" id="inputPassword" v-model="user.pass" />
             </div>
           </div>
           <div class="d-flex justify-content-center align-items-center py-2">
             <label for="inputPassword" class="d-flex col-3 justify-content-center">再次密碼</label>
             <div class="col-sm-6">
-              <input type="password" class="form-control" id="inputPassword" />
+              <input
+                type="password"
+                class="form-control"
+                id="inputPassword"
+                v-model="user.pass_check"
+              />
             </div>
           </div>
           <div class="d-flex justify-content-evenly align-items-center py-3">
@@ -165,10 +160,5 @@ onMounted(() => {
 .head-img {
   border-radius: 100%;
   width: 3rem;
-}
-.balance {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 </style>
