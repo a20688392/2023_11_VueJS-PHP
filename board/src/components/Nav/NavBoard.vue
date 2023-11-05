@@ -1,14 +1,27 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
+import { useToastStore } from '@/stores/alterToast'
 
 import { storeToRefs } from 'pinia'
 
-const userStore = useUserStore();
-const { user } = storeToRefs(userStore);
+const userStore = useUserStore()
+const toastStore = useToastStore()
+const { user } = storeToRefs(userStore)
 
 const register = () => {
-  userStore.register();
+  userStore.register()
+}
+const login = () => {
+  userStore.login()
+}
+const signOut = () => {
+  userStore.signOut()
+  // console.log("tets");
+}
+
+const toastAlter = () => {
+  toastStore.alter()
 }
 
 onMounted(() => {
@@ -19,7 +32,10 @@ onMounted(() => {
 <template>
   <nav class="header-nav d-flex justify-content-between align-items-center">
     <a class="navbar-brand" href="#">CMRDB-Board {{ user.user_id != '' }}</a>
-    <div class="balance" v-if="user.user_id != ''">
+    <button @click="toastAlter()" type="button" class="btn btn-primary" id="liveToastBtn">
+      Show live toast
+    </button>
+    <div class="d-flex justify-content-between align-items-center" v-if="user.user_id != ''">
       <img class="head-img" src="../../assets/logo.svg" />
       <li class="nav-item dropdown">
         <a
@@ -30,12 +46,12 @@ onMounted(() => {
           data-bs-toggle="dropdown"
           aria-expanded="false"
         >
-          username
+          {{ user.account }}
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
           <li><a class="dropdown-item" href="#">個人資料</a></li>
           <li><hr class="dropdown-divider" /></li>
-          <li><a class="dropdown-item" href="#">登出</a></li>
+          <li><a class="dropdown-item" href="#" @click="signOut()">登出</a></li>
         </ul>
       </li>
     </div>
@@ -60,7 +76,7 @@ onMounted(() => {
   >
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
-        <form>
+        <form @submit.prevent="userStore.login()">
           <div class="modal-header justify-content-center">
             <h5 class="modal-title" id="loginModalLabel">登入</h5>
           </div>

@@ -39,6 +39,47 @@ class User
         return $db;
     }
     /**
+     * 尋找使用者
+     *
+     * @param   string      $id         使用者編號
+     *
+     * @throws  Exception   $e          回應錯誤訊息
+     *
+     * 有例外錯誤
+     * 回傳 "未知錯誤"
+     *
+     * @return  array       $return     回傳使用者資訊
+     */
+    public function findUser($user_id)
+    {
+        $db = $this->dbConnect();
+        $statement = $db->prepare("SELECT * FROM users WHERE `id`=?");
+        $return = [];
+        //沒有代表有人來亂
+        try {
+            $statement->execute([$user_id]);
+            if ($statement->rowCount()) {
+                $data = $statement->fetch(PDO::FETCH_ASSOC);
+                $return = [
+                    "account" => $data['account'],
+                    "user_id" =>  $data['id'],
+                    "email" => $data['email'],
+                ];
+            } else {
+                throw new Exception("未知錯誤");
+            }
+        } catch (PDOException $e) {
+            $return = [
+                "無此使用者",
+            ];
+        } catch (Exception $e) {
+            $return = [
+                $e->getMessage(),
+            ];
+        }
+        return $return;
+    }
+    /**
      * 檢查信箱、使用者是否已註冊過
      *
      * @param   string  $account    使用者名
@@ -92,7 +133,6 @@ class User
         $db = $this->dbConnect();
         $sql = "INSERT INTO `users`(`account`, `email`, `password`) VALUES (?,?,?)";
         $statement = $db->prepare($sql);
-        $pass = password_hash($pass, PASSWORD_DEFAULT);
         $check = $this->checkEmailName($account, $email);
         $return = [];
 
@@ -120,7 +160,7 @@ class User
                     throw new Exception("信箱已被註冊");
                 }
             }
-
+            $pass = password_hash($pass, PASSWORD_DEFAULT);
             if ($statement->execute([$account, $email, $pass])) {
                 $return = [
                     "event" => "註冊成功",
@@ -148,6 +188,86 @@ class User
             return $return;
         }
         http_response_code(201);
+        return $return;
+    }
+    /**
+     * 使用者登入
+     *
+     * @param   string  $account        使用者名
+     * @param   string  $pass           使用者密碼
+     *
+     * @throws  Exception   $e          回應錯誤訊息
+     *
+     * $user_name、$user_email、$user_password 之一未填
+     * 回傳 "有欄位未填"
+     *
+     * 密碼或帳號錯誤
+     * 回傳 "帳號名或密碼錯誤"
+     *
+     * @return  array       $return     將回傳的 API 回應資訊，回傳成功 *                                  或者失敗
+     */
+    public function userLogin(string $account, string $pass)
+    {
+        $db = $this->dbConnect();
+        $statement = $db->prepare("SELECT * FROM users WHERE `account`=?");
+        $statement->execute([$account]);
+        $return = [];
+        try {
+            if (empty($account) || empty($pass)) {
+                throw new Exception("有欄位未填!!");
+                //確認有沒有帳號
+            }
+            if (!$statement->rowCount()) {
+                throw new Exception("帳號名或密碼錯誤");
+            } else {
+                $data = $statement->fetch(PDO::FETCH_ASSOC);
+                $password_hash = $data['password'];
+                $user_id = $data['id'];
+                $email = $data['email'];
+                $pass = password_verify($pass, $password_hash);
+
+                if ($pass) {
+                    // $md5_session_id = md5(session_id());
+                    // $_SESSION["X-Session-Hash"] = $md5_session_id;
+                    $_SESSION["User-Id"] = $user_id;
+                    // $_COOKIE['PHPSESSID'] = $session_id;
+                    // setcookie("Session-Hash",
+                    // $session_id, [
+                    //     'samesite' => 'None',
+                    //     'secure' => true,
+                    // ]);
+                    $return = [
+                        "account" => $account,
+                        "user_id" => $user_id,
+                        "email" => $email,
+                        "event" => "登入訊息",
+                        "status" => "success",
+                        "content" => "登入成功，歡迎 $account 登入",
+                        // "X-Session-Hash" => $md5_session_id
+                    ];
+                    //確認有沒有密碼錯誤
+                } else {
+                    throw new Exception("帳號名或密碼錯誤");
+                }
+            }
+        } catch (PDOException $e) {
+            $return = [
+                "event" => "登入訊息",
+                "status" => "error",
+                "content" => "登入失敗",
+            ];
+            http_response_code(500);
+            return $return;
+        } catch (Exception $e) {
+            $return = [
+                "event" => "登入訊息",
+                "status" => "error",
+                "content" => "登入失敗，" . $e->getMessage(),
+            ];
+            http_response_code(400);
+            return $return;
+        }
+        http_response_code(200);
         return $return;
     }
 }
