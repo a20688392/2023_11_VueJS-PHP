@@ -28,7 +28,7 @@ export const useUserStore = defineStore('user', {
         method: 'GET',
         headers: { 'content-type': 'multipart/form-data' },
         withCredentials: true,
-        url: 'http://192.168.56.1/~web/2023_11_VueJS-PHP/board-api/src/Controller/User/FindUser.php'
+        url: 'http://192.168.1.180/~web/2023_11_VueJS-PHP/board-api/src/Controller/User/FindUser.php'
       }
       axios(options)
         .then((res) => {
@@ -58,7 +58,7 @@ export const useUserStore = defineStore('user', {
           pass: this.user.pass,
           pass_check: this.user.pass_check
         },
-        url: 'http://192.168.56.1/~web/2023_11_VueJS-PHP/board-api/src/Controller/User/CreateUser.php'
+        url: 'http://192.168.1.180/~web/2023_11_VueJS-PHP/board-api/src/Controller/User/CreateUser.php'
       }
       axios(options)
         .then((res) => {
@@ -89,7 +89,7 @@ export const useUserStore = defineStore('user', {
           account: this.user.account,
           pass: this.user.pass
         },
-        url: 'http://192.168.56.1/~web/2023_11_VueJS-PHP/board-api/src/Controller/User/UserLogin.php'
+        url: 'http://192.168.1.180/~web/2023_11_VueJS-PHP/board-api/src/Controller/User/UserLogin.php'
       }
       axios(options)
         .then((res) => {
@@ -115,7 +115,7 @@ export const useUserStore = defineStore('user', {
       const options = {
         method: 'GET',
         withCredentials: true,
-        url: 'http://192.168.56.1/~web/2023_11_VueJS-PHP/board-api/src/Controller/User/UserLogout.php'
+        url: 'http://192.168.1.180/~web/2023_11_VueJS-PHP/board-api/src/Controller/User/UserLogout.php'
       }
       axios(options)
         .then((res) => {

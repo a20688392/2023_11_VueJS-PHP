@@ -49,7 +49,7 @@ export default function UserData(userStore) {
         pass: user.pass,
         pass_check: user.pass_check
       },
-      url: 'http://192.168.56.1/~web/2023_11_VueJS-PHP/board-api/src/Controller/User/CreateUser.php'
+      url: 'http://192.168.1.180/~web/2023_11_VueJS-PHP/board-api/src/Controller/User/CreateUser.php'
     }
     axios(options)
       .then((res) => {
