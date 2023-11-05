@@ -12,13 +12,13 @@ import {
   // create naive ui
   create,
   // component
-    NButton,NSpace
+    NButton,NSpace,NMessageProvider,NDropdown
 } from 'naive-ui'
 // native UI 字體
 import 'vfonts/Lato.css'
 
 const naive = create({
-  components: [NButton,NSpace]
+  components: [NButton, NSpace, NMessageProvider, NDropdown]
 })
 
 const app = createApp(App)
