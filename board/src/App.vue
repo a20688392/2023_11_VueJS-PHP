@@ -5,12 +5,8 @@ import AlterToast from '@/components/AlterToast/AlterToast.vue'
 import { useUserStore } from '@/stores/user'
 const userStore = useUserStore()
 
-const findUser = () => {
-  userStore.findUser()
-}
-
 onMounted(() => {
-  findUser()
+  userStore.findUser()
   console.log('mounted!')
 })
 </script>

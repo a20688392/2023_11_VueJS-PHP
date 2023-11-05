@@ -9,20 +9,6 @@ const userStore = useUserStore()
 const toastStore = useToastStore()
 const { user } = storeToRefs(userStore)
 
-const register = () => {
-  userStore.register()
-}
-const login = () => {
-  userStore.login()
-}
-const signOut = () => {
-  userStore.signOut()
-  // console.log("tets");
-}
-
-const toastAlter = () => {
-  toastStore.alter()
-}
 
 onMounted(() => {
   console.log('mounted!')
@@ -32,7 +18,7 @@ onMounted(() => {
 <template>
   <nav class="header-nav d-flex justify-content-between align-items-center">
     <a class="navbar-brand" href="#">CMRDB-Board {{ user.user_id != '' }}</a>
-    <button @click="toastAlter()" type="button" class="btn btn-primary" id="liveToastBtn">
+    <button @click="toastStore.alter()" type="button" class="btn btn-primary" id="liveToastBtn">
       Show live toast
     </button>
     <div class="d-flex justify-content-between align-items-center" v-if="user.user_id != ''">
@@ -51,7 +37,7 @@ onMounted(() => {
         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
           <li><a class="dropdown-item" href="#">個人資料</a></li>
           <li><hr class="dropdown-divider" /></li>
-          <li><a class="dropdown-item" href="#" @click="signOut()">登出</a></li>
+          <li><a class="dropdown-item" href="#" @click="userStore.signOut()">登出</a></li>
         </ul>
       </li>
     </div>
@@ -116,7 +102,7 @@ onMounted(() => {
   >
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
-        <form @submit.prevent="register()">
+        <form @submit.prevent="userStore.register()">
           <div class="modal-header justify-content-center">
             <h5 class="modal-title" id="loginModalLabel">註冊</h5>
           </div>
