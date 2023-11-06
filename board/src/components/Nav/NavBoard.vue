@@ -11,28 +11,30 @@ const { user } = storeToRefs(userStore)
 
 const options = ref([
   {
-    label: '滨海湾金沙，新加坡',
-    key: 'marina bay sands',
-    disabled: true
+    label: '個人資料',
+    key: 'editProfile',
   },
   {
-    label: '布朗酒店，伦敦',
-    key: "brown's hotel, london"
+    key: 'header-divider',
+    type: 'divider'
   },
   {
-    label: '亚特兰蒂斯巴哈马，拿骚',
-    key: 'atlantis nahamas, nassau'
-  },
-  {
-    label: '比佛利山庄酒店，洛杉矶',
-    key: 'the beverly hills hotel, los angeles'
+    label: '登出',
+    key: 'signOut'
   }
 ])
 const showDropdown = ref(false)
 
 const handleSelect = (key) => {
-  const message = window.$message
-  message.info(String(key))
+  if(key == 'editProfile'){
+      const message = window.$message
+      message.info(String(key))
+  }
+  if (key == 'signOut'){
+    userStore.signOut()
+  }
+  // const message = window.$message
+  // message.info(String(key))
 }
 
 const handleClick = () => {
@@ -45,22 +47,22 @@ onMounted(() => {
 </script>
 
 <template>
-  <nav class="header-nav d-flex justify-content-between align-items-center">
+  <n-space align="baseline">
+    <n-button size="tiny" secondary strong>
+      小小
+    </n-button>
+    <n-button size="small" secondary strong>
+      小
+    </n-button>
+    <n-button size="medium" secondary strong>
+      不小
+    </n-button>
+    <n-button size="large" secondary strong>
+      不不小
+    </n-button>
+  </n-space>
+  <nav color="#242f42" size="large" class="header-nav d-flex justify-content-between align-items-center">
     <a class="navbar-brand" href="#">CMRDB-Board {{ user.user_id != '' }}</a>
-    <button @click="toastStore.alter()" type="button" class="btn btn-primary" id="liveToastBtn">
-      Show live toast
-    </button>
-    <n-space>
-      <n-dropdown trigger="hover" :options="options" @select="handleSelect">
-        <n-button>悬浮！</n-button>
-      </n-dropdown>
-      <n-dropdown trigger="click" :options="options" @select="handleSelect">
-        <n-button>点击！</n-button>
-      </n-dropdown>
-      <n-dropdown :show="showDropdown" :options="options" @select="handleSelect">
-        <n-button @click="handleClick"> 噢！我要自己手动！ </n-button>
-      </n-dropdown>
-    </n-space>
     <div class="d-flex justify-content-between align-items-center" v-if="user.user_id != ''">
       <img class="head-img" src="../../assets/logo.svg" />
       <li class="nav-item dropdown">
@@ -79,7 +81,11 @@ onMounted(() => {
           <li><hr class="dropdown-divider" /></li>
           <li><a class="dropdown-item" href="#" @click="userStore.signOut()">登出</a></li>
         </ul>
+        
       </li>
+      <n-dropdown trigger="click" :options="options" @select="handleSelect">
+          <n-button text color="#ffffff">{{ user.account }}</n-button>
+        </n-dropdown>
     </div>
     <div class="d-flex justify-content-between align-items-center" v-else>
       <button
