@@ -1,95 +1,12 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
-import { useToastStore } from '@/stores/alterToast'
 
 import { storeToRefs } from 'pinia'
 
 const userStore = useUserStore()
-const toastStore = useToastStore()
 const { user } = storeToRefs(userStore)
 
-const options = ref([
-  {
-    label: '個人資料',
-    key: 'editProfile'
-  },
-  {
-    key: 'header-divider',
-    type: 'divider'
-  },
-  {
-    label: '登出',
-    key: 'signOut'
-  }
-])
-const formRef = ref(null)
-const loginRules = {
-  username: [{ required: true, message: '請輸入帳號', trigger: 'blur' }],
-  password: [{ required: true, message: '請輸入密碼', trigger: 'blur' }]
-}
-const loginForm = ref({
-  username: '',
-  password: ''
-})
-
-const handleValidateClick = (e) => {
-  e.preventDefault()
-  formRef.value?.validate((errors) => {
-    const message = window.$message
-    if (!errors) {
-      message.success('Valid')
-    } else {
-      console.log(errors)
-      message.error('Invalid')
-    }
-  })
-}
-const size = ref('medium')
-const bodyStyle = ref({
-  width: '600px'
-})
-const segmented = ref({
-  content: 'soft',
-  footer: 'soft'
-})
-
-const loginModalVisible = ref(false)
-
-const showLoginModal = () => {
-  loginModalVisible.value = true
-}
-const login = () => {
-  const formRef = loginForm.value
-
-  formRef.validate((errors) => {
-    if (!errors) {
-      // 在這裡處理登入邏輯，例如發送請求到後端進行驗證
-      message.success('登入成功')
-      loginModalVisible.value = false
-    } else {
-      message.error('請輸入正確的帳號和密碼')
-    }
-  })
-}
-
-const showDropdown = ref(false)
-
-const handleSelect = (key) => {
-  if (key == 'editProfile') {
-    const message = window.$message
-    message.info(String(key))
-  }
-  if (key == 'signOut') {
-    userStore.signOut()
-  }
-  // const message = window.$message
-  // message.info(String(key))
-}
-
-const handleClick = () => {
-  showDropdown.value = !showDropdown.value
-}
 
 onMounted(() => {
   console.log('mounted!')
@@ -113,94 +30,21 @@ onMounted(() => {
           {{ user.account }}
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <li><a class="dropdown-item" href="#">個人資料</a></li>
+          <li><a class="dropdown-item" href="/">個人資料</a></li>
           <li><hr class="dropdown-divider" /></li>
           <li><a class="dropdown-item" href="#" @click="userStore.signOut()">登出</a></li>
         </ul>
       </li>
-      <n-dropdown trigger="click" :options="options" @select="handleSelect">
-        <n-button text color="#ffffff">{{ user.account }}</n-button>
-      </n-dropdown>
     </div>
-    <!-- <div class="d-flex justify-content-between align-items-center" v-else></div> -->
-    <div v-else>
-      <!-- <n-button size="large" strong secondary @click="showModal = true"> 登入 / 註冊 </n-button> -->
-      <!-- <n-button color="#8850ff" @click="showModal = true"> 登入 / 註冊 </n-button> -->
-      <!-- <n-modal v-model:show="showModal" transform-origin="center"> -->
-      <!-- <n-form
-          ref="formRef"
-          inline
-          :label-width="80"
-          :model="formValue"
-          :rules="rules"
-          :size="size"
-        > -->
-      <!-- <n-form-item label="帳號" path="user.account">
-            <n-input v-model:value="formValue.user.account" placeholder="account" /> -->
-      <!-- </n-form-item>
-          <n-form-item label="密碼" path="user.pass">
-            <n-input v-model:value="formValue.user.pass" placeholder="password" />
-          </n-form-item>
-          <n-form-item>
-            <n-button attr-type="button" @click="handleValidateClick"> 验证 </n-button> -->
-      <!-- </n-form-item> -->
-      <!-- </n-form> -->
-      <!-- <n-form
-          ref="formRef"
-          inline
-          :label-width="80"
-          :model="formValue"
-          :rules="rules"
-          :size="size"
-        > -->
-      <!-- <n-form-item label="姓名" path="user.name">
-            <n-input v-model:value="formValue.user.name" placeholder="输入姓名" />
-          </n-form-item>
-          <n-form-item label="年龄" path="user.age">
-            <n-input v-model:value="formValue.user.age" placeholder="输入年龄" />
-          </n-form-item>
-          <n-form-item label="电话号码" path="phone">
-            <n-input v-model:value="formValue.phone" placeholder="电话号码" />
-          </n-form-item>
-          <n-form-item>
-            <n-button attr-type="button" @click="handleValidateClick"> 验证 </n-button>
-          </n-form-item>
-        </n-form> -->
-      <!-- <n-card
-          style="width: 600px"
-          title="模态框"
-          :bordered="false"
-          size="huge"
-          role="dialog"
-          aria-modal="true"
-        >
-          <template #header-extra> 噢！ </template>
-          内容
-          <template #footer> 尾部<n-input v-model:value="user.account" placeholder="输入姓名" /> </template>
-        </n-card> -->
-      <!-- </n-modal> -->
-      <n-button @click="showLoginModal" text color="#FFFFFF">登入 / 註冊</n-button>
-      <n-modal v-model:show="loginModalVisible" transform-origin="center" title="帳號登入">
-        <n-form
-          :model="loginForm"
-          :rules="loginRules"
-          size="large"
-          label-placement="left"
-          class="w-[30rem] p-5 bg-gray-50"
-        >
-          <n-form-item label="帳號" prop="username">
-            <n-input v-model="loginForm.username" placeholder="請輸入帳號" />
-          </n-form-item>
-          <n-form-item label="密碼" prop="password">
-            <n-input type="password" v-model="loginForm.password" placeholder="請輸入密碼" />
-          </n-form-item>
-          <n-form-item>
-            <n-button dashed> Default </n-button>
-            <n-button type="info">登入</n-button>
-          </n-form-item>
-        </n-form>
-      </n-modal>
-      <n-button type="info">登入</n-button>
+    <div class="d-flex justify-content-between align-items-center" v-else>
+      <button
+        class="btn btn-light mx-4"
+        data-bs-toggle="modal"
+        data-bs-target="#loginModalUI"
+        aria-hidden="true"
+      >
+        登入 / 註冊
+      </button>
     </div>
   </nav>
   <!-- Login Modal -->
