@@ -31,18 +31,18 @@ const { willAdd } = storeToRefs(commentStore)
             <h5 class="modal-title" id="addCommentModalLabel">新增留言</h5>
           </div>
           <div class="d-flex justify-content-center align-items-center py-2">
-            <label for="inputAccount" class="d-flex col-3 justify-content-center">標題</label>
+            <label for="inputTitle" class="d-flex col-3 justify-content-center">標題</label>
             <div class="col-sm-6">
-              <input type="text" class="form-control" id="inputAccount" v-model="willAdd.title" />
+              <input type="text" class="form-control" id="inputTitle" v-model="willAdd.title" />
             </div>
           </div>
           <div class="d-flex justify-content-center align-items-center py-2">
-            <label for="inputPassword" class="d-flex col-3 justify-content-center">內文</label>
+            <label for="inputContent" class="d-flex col-3 justify-content-center">內文</label>
             <div class="col-sm-6">
               <input
-                type="password"
+                type="text"
                 class="form-control"
-                id="inputPassword"
+                id="inputContent"
                 v-model="willAdd.content"
               />
             </div>
