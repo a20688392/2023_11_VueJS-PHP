@@ -7,7 +7,7 @@ const { toastData } = storeToRefs(toastStore)
 </script>
 
 <template>
-  <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+  <div class="d-flex position-fixed bottom-0 end-0 p-3" style="z-index: 11">
     <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
       <!-- 修改失敗 -->
       <div class="toast-header text-light bg-danger" v-if="toastData.status == 'error'">
@@ -27,5 +27,6 @@ const { toastData } = storeToRefs(toastStore)
       </div>
       <div class="toast-body">{{ toastData.content }}</div>
     </div>
+    <div class="p-5"></div>
   </div>
 </template>

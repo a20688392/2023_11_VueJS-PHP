@@ -1,5 +1,5 @@
 <script setup>
-import NavBoard from '@/components/Nav/NavBoard.vue'
+import NavBoard from '@/components/Global/NavBoard.vue'
 import UserProfile from '@/components/UserProfile/UserProfile.vue'
 import OwnComment from '@/components/Comment/OwnComment.vue'
 </script>

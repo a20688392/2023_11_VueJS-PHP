@@ -145,7 +145,7 @@ onMounted(() => {
                 已經有帳戶?
               </a>
             </div>
-            <button type="submit" class="btn btn-primary px-5" data-bs-dismiss="modal">註冊</button>
+            <button type="submit" class="btn btn-success px-5" data-bs-dismiss="modal">註冊</button>
           </div>
         </form>
       </div>

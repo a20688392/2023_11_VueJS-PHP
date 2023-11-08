@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
-import AlterToast from '@/components/AlterToast/AlterToast.vue'
+import AlterToast from '@/components/Global/AlterToast.vue'
 import { useUserStore } from '@/stores/user'
 const userStore = useUserStore()
 

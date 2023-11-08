@@ -8,7 +8,7 @@ const { user } = storeToRefs(userStore)
 <template>
   <div class="col-7">
     <div class="mb-1 bg-white">
-      <div class="w-auto d-flex align-items-center flex-column mx-2">
+      <div class="w-auto d-flex align-items-center text-center flex-column mx-2">
         <div class="m-2">自己所有留言</div>
       </div>
       <div class="w-auto d-flex align-items-center flex-column border-top mx-2">
