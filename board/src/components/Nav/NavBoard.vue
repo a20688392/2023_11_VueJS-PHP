@@ -7,7 +7,6 @@ import { storeToRefs } from 'pinia'
 const userStore = useUserStore()
 const { user } = storeToRefs(userStore)
 
-
 onMounted(() => {
   console.log('mounted!')
 })
@@ -15,7 +14,7 @@ onMounted(() => {
 
 <template>
   <nav class="header-nav d-flex justify-content-between align-items-center">
-    <a class="navbar-brand" href="#">CMRDB-Board {{ user.user_id != '' }}</a>
+    <router-link class="navbar-brand" :to="'/'" replace>CMRDB-Board</router-link>
     <div class="d-flex justify-content-between align-items-center" v-if="user.user_id != ''">
       <img class="head-img" src="../../assets/logo.svg" />
       <li class="nav-item dropdown">
@@ -30,9 +29,15 @@ onMounted(() => {
           {{ user.account }}
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <li><a class="dropdown-item" href="/">個人資料</a></li>
+          <li>
+            <router-link class="dropdown-item" :to="'/userProfile'" replace>個人資料</router-link>
+          </li>
           <li><hr class="dropdown-divider" /></li>
-          <li><a class="dropdown-item" href="#" @click="userStore.signOut()">登出</a></li>
+          <li>
+            <router-link class="dropdown-item" :to="'/'" @click="userStore.signOut()" replace
+              >登出</router-link
+            >
+          </li>
         </ul>
       </li>
     </div>

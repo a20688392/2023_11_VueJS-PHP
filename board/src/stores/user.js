@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useToastStore } from '@/stores/alterToast'
+import VueCookies from 'vue-cookies'
 
 export const useUserStore = defineStore('user', {
   state: () => {
@@ -8,9 +9,17 @@ export const useUserStore = defineStore('user', {
       user: {
         account: '',
         email: '',
+        intro: '',
         pass: '',
         pass_check: '',
         user_id: ''
+      },
+      tmpUser: {
+        account: '',
+        email: '',
+        intro: '',
+        pass: '',
+        pass_check: ''
       }
     }
   },
@@ -23,19 +32,37 @@ export const useUserStore = defineStore('user', {
     // increment() {
     //   this.count++
     // }
+    async check() {
+      console.log('check')
+      const options = {
+        method: 'GET',
+        headers: { 'content-type': 'multipart/form-data' },
+        withCredentials: true,
+        url: 'http://localhost/2023_11_VueJS-PHP/board-api/src/Controller/User/FindUser.php'
+      }
+      axios(options)
+        .then((res) => {
+          // console.log(res.data)
+          if (res.data) {
+            console.log(res.data)
+            return res.data
+          }
+        })
+        .catch((error) => {
+          console.log('no')
+          console.log(error)
+        })
+    },
     async findUser() {
       const options = {
         method: 'GET',
         headers: { 'content-type': 'multipart/form-data' },
         withCredentials: true,
-        url: 'http://192.168.1.180/~web/2023_11_VueJS-PHP/board-api/src/Controller/User/FindUser.php'
+        url: 'http://localhost/2023_11_VueJS-PHP/board-api/src/Controller/User/FindUser.php'
       }
       axios(options)
         .then((res) => {
-          console.log(res)
           if (res.data) {
-            console.log('yes')
-            console.log(res.data)
             this.user.user_id = res.data.user_id
             this.user.email = res.data.email
             this.user.account = res.data.account
@@ -58,7 +85,7 @@ export const useUserStore = defineStore('user', {
           pass: this.user.pass,
           pass_check: this.user.pass_check
         },
-        url: 'http://192.168.1.180/~web/2023_11_VueJS-PHP/board-api/src/Controller/User/CreateUser.php'
+        url: 'http://localhost/2023_11_VueJS-PHP/board-api/src/Controller/User/CreateUser.php'
       }
       axios(options)
         .then((res) => {
@@ -89,14 +116,18 @@ export const useUserStore = defineStore('user', {
           account: this.user.account,
           pass: this.user.pass
         },
-        url: 'http://192.168.1.180/~web/2023_11_VueJS-PHP/board-api/src/Controller/User/UserLogin.php'
+        url: 'http://localhost/2023_11_VueJS-PHP/board-api/src/Controller/User/UserLogin.php'
       }
       axios(options)
         .then((res) => {
           console.log(res)
+          VueCookies.set('User-Id', res.data.user_id, { expires: 1 })
+          // Cookies.set('User-Id', res.data.user_id)
           this.user.pass = ''
           this.user.pass_check = ''
           this.user.user_id = res.data.user_id
+          this.user.email = res.data.email
+          this.user.intro = res.data.intro
           let toast = useToastStore()
           toast.setToast(res.data)
         })
@@ -115,25 +146,51 @@ export const useUserStore = defineStore('user', {
       const options = {
         method: 'GET',
         withCredentials: true,
-        url: 'http://192.168.1.180/~web/2023_11_VueJS-PHP/board-api/src/Controller/User/UserLogout.php'
+        url: 'http://localhost/2023_11_VueJS-PHP/board-api/src/Controller/User/UserLogout.php'
       }
       axios(options)
         .then((res) => {
           console.log(res)
+          VueCookies.remove('User-Id')
           return res.data
         })
         .then((res) => {
           let toast = useToastStore()
           toast.setToast(res)
+          this.router.push({ path: '/' })
           this.clearData()
         })
         .catch((error) => {
           console.log('no')
           console.log(error)
         })
-      // delUserCacheData();
-      // console.log(state.user);
-      // getItems();
+    },
+    async editUser() {
+      const options = {
+        method: 'POST',
+        withCredentials: true,
+        headers: { 'content-type': 'multipart/form-data' },
+        url: 'http://localhost/2023_11_VueJS-PHP/board-api/src/Controller/User/EditUser.php',
+        data: {
+          account: this.tmpUser.account,
+          email: this.tmpUser.email,
+          intro: this.tmpUser.intro,
+          pass: this.tmpUser.pass,
+          pass_check: this.tmpUser.pass_check
+        }
+      }
+      axios(options)
+        .then((res) => {
+          console.log(res)
+          let toast = useToastStore()
+          this.router.push({ path: '/' })
+          toast.setToast(res.data)
+          this.clearData()
+        })
+        .catch((error) => {
+          console.log('no')
+          console.log(error)
+        })
     }
   }
 })

@@ -64,6 +64,7 @@ class User
                     "account" => $data['account'],
                     "user_id" =>  $data['id'],
                     "email" => $data['email'],
+                    "intro" => $data["intro"],
                 ];
             } else {
                 throw new Exception("未知錯誤");
@@ -106,13 +107,14 @@ class User
     /**
      * 註冊使用者
      *
-     * @param   string  $account      使用者名
-     * @param   string  $email     使用者信箱
-     * @param   string  $pass  使用者密碼
+     * @param   string  $account        使用者名
+     * @param   string  $email          使用者信箱
+     * @param   string  $pass           使用者密碼
+     * @param   string  $pass_check     使用者密碼確認
      *
      * @throws  Exception   $e          回應錯誤訊息
      *
-     * $account、$email、$pass 之一未填
+     * $account、$email、$pass、$pass_check 之一未填
      * 回傳 "有欄位未填"
      *
      * $email FILTER_SANITIZE_EMAIL、FILTER_VALIDATE_EMAIL
@@ -191,6 +193,112 @@ class User
         return $return;
     }
     /**
+     * 編輯使用者資料
+     *
+     * @param   string  $account        使用者名
+     * @param   string  $email          使用者信箱
+     * @param   string  $intro          使用者簡介
+     * @param   string  $pass           使用者密碼
+     * @param   string  $pass_check     使用者密碼確認
+     *
+     * @throws  Exception   $e          回應錯誤訊息
+     *
+     * $account、$email、$pass、$pass_check 之一未填
+     * 回傳 "有欄位未填"
+     *
+     * $email FILTER_SANITIZE_EMAIL、FILTER_VALIDATE_EMAIL
+     * 為true，代表信箱格是不合規定，
+     * 回傳 "信箱格式錯誤" . "<br>" . "信箱範例：test@example.com"
+     *
+     * name_RESULT      為0 時，代表沒有被註冊過，1為有
+     * 回傳 "使用者名已被註冊"
+     *
+     * email_RESULT     為0 時，代表沒有被註冊過，1為有
+     * 回傳 "信箱已被註冊"
+     * 同時都有回傳 "使用者名和信箱已被註冊"
+     *
+     * @return  array       $return     將回傳的 API 回應資訊，回傳成功 *                                  或者失敗
+     */
+    public function editUser(
+        string $account,
+        string $email,
+        string $intro,
+        string $pass,
+        string $pass_check
+    ) {
+
+        $return = [];
+        try {
+            if ($pass !== $pass_check) {
+                throw new Exception("密碼不一致");
+            }
+
+            //信箱
+            //把值作為電子郵件地址來驗證
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                throw new Exception("信箱格式錯誤" . "<br>" . "信箱範例：test@example.com");
+            }
+            $data = [
+                "account" => $account,
+                "email" => $email,
+            ];
+            $user_id = $_SESSION["User-Id"];
+            $user_data = $this->findUser($user_id);
+            $check_data = [];
+            foreach ($data as $key => $value) {
+                if ($value !== $user_data[$key]) {
+                    $check_data[$key] = $value;
+                } else {
+                    $check_data[$key] = "";
+                }
+            }
+            // return $check_data;
+            $check = $this->checkEmailName($check_data['account'], $check_data['email']);
+            // return $check;
+            $db = $this->dbConnect();
+            $sql = "UPDATE `users` SET `account`=?, `email`=?, `intro`=?, `password`=? WHERE `id` = ?";
+            $statement = $db->prepare($sql);
+
+            if ($check['name_RESULT'] || $check['email_RESULT']) {
+                if (($check['name_RESULT'] && $check['email_RESULT'])) {
+                    throw new Exception("使用者名和信箱已被註冊");
+                } elseif ($check['name_RESULT']) {
+                    throw new Exception("使用者名已被註冊");
+                } else {
+                    throw new Exception("信箱已被註冊");
+                }
+            }
+            $pass = password_hash($pass, PASSWORD_DEFAULT);
+            if ($statement->execute([$account, $email, $intro, $pass, $user_id])) {
+                $return = [
+                    "event" => "修改成功",
+                    "status" => "success",
+                    "content" => "已成功修改 # $account ，再請重新登入",
+                ];
+            } else {
+                throw new Exception("未知錯誤" . $statement->errorInfo()[2]);
+            }
+        } catch (PDOException $e) {
+            $return = [
+                "event" => "修改失敗",
+                "status" => "error",
+                "content" => "修改失敗，原因： " . $e->getMessage(),
+            ];
+            http_response_code(500);
+            return $return;
+        } catch (Exception $e) {
+            $return = [
+                "event" => "修改失敗",
+                "status" => "error",
+                "content" => "修改失敗，原因： " . $e->getMessage(),
+            ];
+            http_response_code(400);
+            return $return;
+        }
+        http_response_code(201);
+        return $return;
+    }
+    /**
      * 使用者登入
      *
      * @param   string  $account        使用者名
@@ -222,14 +330,14 @@ class User
             } else {
                 $data = $statement->fetch(PDO::FETCH_ASSOC);
                 $password_hash = $data['password'];
-                $user_id = $data['id'];
-                $email = $data['email'];
                 $pass = password_verify($pass, $password_hash);
 
                 if ($pass) {
                     // $md5_session_id = md5(session_id());
                     // $_SESSION["X-Session-Hash"] = $md5_session_id;
-                    $_SESSION["User-Id"] = $user_id;
+                    $_COOKIE['X-User-Id'] = $data['id'];
+                    // $user_id = $data['id'];
+                    $_SESSION["User-Id"] = $data['id'];
                     // $_COOKIE['PHPSESSID'] = $session_id;
                     // setcookie("Session-Hash",
                     // $session_id, [
@@ -238,8 +346,9 @@ class User
                     // ]);
                     $return = [
                         "account" => $account,
-                        "user_id" => $user_id,
-                        "email" => $email,
+                        "user_id" => $data['id'],
+                        "email" => $data['email'],
+                        "intro" => $data['intro'],
                         "event" => "登入訊息",
                         "status" => "success",
                         "content" => "登入成功，歡迎 $account 登入",
