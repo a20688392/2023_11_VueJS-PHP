@@ -274,7 +274,7 @@ class Comment
                 } else {
                     $sql = "SELECT * FROM comments  WHERE 
 		            (title LIKE ? OR content LIKE ?)
-                    AND created_at BETWEEN ? AND ?";
+                    AND createdAt BETWEEN ? AND ?";
                     $param = [
                         "%$search_content%", "%$search_content%", $first_time, $last_time
                     ];

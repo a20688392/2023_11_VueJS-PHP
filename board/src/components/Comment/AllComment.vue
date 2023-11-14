@@ -24,9 +24,9 @@ onMounted(() => {
             <div class="bg-white p-1">
               <h4 class="m-5">{{ data.content }}</h4>
               <div>
-                <small class="text-muted">{{ data.created_at }}</small>
+                <small class="text-muted">{{ data.createdAt }}</small>
                 <br />
-                <small class="text-muted">{{ data.updated_at }}</small>
+                <small class="text-muted">{{ data.updatedAt }}</small>
               </div>
             </div>
           </div>
@@ -37,9 +37,9 @@ onMounted(() => {
             <div class="bg-white p-1">
               <h4 class="m-5">{{ data.content }}</h4>
               <div>
-                <small class="text-muted">{{ data.created_at }}</small>
+                <small class="text-muted">{{ data.createdAt }}</small>
                 <br />
-                <small class="text-muted">{{ data.updated_at }}</small>
+                <small class="text-muted">{{ data.updatedAt }}</small>
               </div>
             </div>
           </div>

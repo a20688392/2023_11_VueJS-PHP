@@ -73,15 +73,15 @@ CREATE TABLE `users` (
   `intro` varchar(255) DEFAULT NULL,
   `password` varchar(60) NOT NULL,
   `email` varchar(255) DEFAULT NULL,
-  `createAt` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updateAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updatedAt` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- 傾印資料表的資料 `users`
 --
 
-INSERT INTO `users` (`id`, `account`, `intro`, `password`, `email`, `createAt`, `updateAt`) VALUES
+INSERT INTO `users` (`id`, `account`, `intro`, `password`, `email`, `createdAt`, `updatedAt`) VALUES
 (6, '123', '123123', '$2y$10$YZ.bJtmF5YiHGY3JfG0pBeB0TJ2WxhiHrL2UK0DnCsgy8n6jRXSYm', 'te%23@example.com', '2023-11-01 11:53:05', '2023-11-09 06:42:33'),
 (7, '12333', NULL, '$2y$10$O3zUM3dvxbd9CFFukXcjQ.DJVYQUdyJZiAER4jqKVz13.HwxhlplK', 'te123123@example.com', '2023-11-01 13:00:49', '2023-11-01 13:00:49'),
 (9, 'test123', NULL, '$2y$10$7whdyYe9Ls7kYUzAl6k7qeo3nfIu.iH0UJpB.KUgyP63tuGJVOEdO', 'test123123@example.com', '2023-11-02 13:31:34', '2023-11-02 13:31:34'),
