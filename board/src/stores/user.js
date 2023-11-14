@@ -51,6 +51,8 @@ export const useUserStore = defineStore('user', {
         .catch((error) => {
           console.log('no')
           console.log(error)
+          let toast = useToastStore()
+          toast.setToast(error.response.data)
         })
     },
     async findUser() {
@@ -72,6 +74,8 @@ export const useUserStore = defineStore('user', {
         .catch((error) => {
           console.log('no')
           console.log(error)
+          let toast = useToastStore()
+          toast.setToast(error.response.data)
         })
     },
     // //註冊
@@ -163,6 +167,8 @@ export const useUserStore = defineStore('user', {
         .catch((error) => {
           console.log('no')
           console.log(error)
+          let toast = useToastStore()
+          toast.setToast(error.response.data)
         })
     },
     async editUser() {
@@ -190,6 +196,8 @@ export const useUserStore = defineStore('user', {
         .catch((error) => {
           console.log('no')
           console.log(error)
+          let toast = useToastStore()
+          toast.setToast(error.response.data)
         })
     }
   }

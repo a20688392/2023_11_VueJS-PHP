@@ -63,6 +63,8 @@ export const useCommentStore = defineStore('commentData', {
         .catch((error) => {
           console.log('no')
           console.log(error)
+          let toast = useToastStore()
+          toast.setToast(error.response.data)
         })
     },
     // 清空
@@ -96,6 +98,8 @@ export const useCommentStore = defineStore('commentData', {
         .catch((error) => {
           console.log('create error')
           console.log(error)
+          let toast = useToastStore()
+          toast.setToast(error.response.data)
         })
     }
   }
