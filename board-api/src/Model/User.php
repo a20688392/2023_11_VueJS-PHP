@@ -255,9 +255,6 @@ class User
             // return $check_data;
             $check = $this->checkEmailName($check_data['account'], $check_data['email']);
             // return $check;
-            $db = $this->dbConnect();
-            $sql = "UPDATE `users` SET `account`=?, `email`=?, `intro`=?, `password`=? WHERE `id` = ?";
-            $statement = $db->prepare($sql);
 
             if ($check['name_RESULT'] || $check['email_RESULT']) {
                 if (($check['name_RESULT'] && $check['email_RESULT'])) {
@@ -268,8 +265,21 @@ class User
                     throw new Exception("信箱已被註冊");
                 }
             }
-            $pass = password_hash($pass, PASSWORD_DEFAULT);
-            if ($statement->execute([$account, $email, $intro, $pass, $user_id])) {
+
+            $db = $this->dbConnect();
+            $replace = [];
+            if (empty($pass)) {
+                $sql = "UPDATE `users` SET `account`=?, `email`=?, `intro`=? WHERE `id` = ?";
+                $statement = $db->prepare($sql);
+                $replace = [$account, $email, $intro, $user_id];
+            } else {
+                $sql = "UPDATE `users` SET `account`=?, `email`=?, `intro`=?, `password`=? WHERE `id` = ?";
+                $statement = $db->prepare($sql);
+                $pass = password_hash($pass, PASSWORD_DEFAULT);
+                $replace = [$account, $email, $intro, $pass, $user_id];
+            }
+            
+            if ($statement->execute($replace)) {
                 $return = [
                     "event" => "修改成功",
                     "status" => "success",
