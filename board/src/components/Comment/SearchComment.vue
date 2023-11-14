@@ -38,35 +38,4 @@ const { search } = storeToRefs(commentStore)
       </div>
     </form>
   </div>
-  <!-- <form @submit.prevent="commentStore.searchComment()">
-    <div class="search">
-      <div class="search-input">
-        <div class="search-text">
-          起
-          <input
-            type="datetime-local"
-            class="btn btn-outline-secondary search-btn"
-            v-model="search.first_time"
-          />
-          <div>~</div>
-          <div>迄</div>
-          <input
-            type="datetime-local"
-            class="btn btn-outline-secondary search-btn"
-            v-model="search.last_time"
-          />
-        </div>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="欲查詢的關鍵字"
-          v-model="search.search_content"
-        />
-      </div>
-      <div class="search-submit">
-        <button class="middle-submit middle-div btn btn-dark" type="submit" >查詢關鍵字</button>
-        <button type="button" @click="commentStore.clearSearch()">重製</button>
-      </div>
-    </div>
-  </form> -->
 </template>
