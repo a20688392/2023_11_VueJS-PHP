@@ -27,10 +27,23 @@ onMounted(() => {
               <div class="bg-white p-1 col-md-4 text-center flex-grow-1 row g-0">
                 <div class="col-md-6">
                   <div>
-                    <h4>標題：{{ data.title }}</h4>
+                    <h4 v-if="data.id !== cache.id">標題：{{ data.title }}</h4>
+                    <div v-if="data.id == cache.id">標題：</div>
+                    <input
+                      type="text"
+                      class="form-control"
+                      v-if="data.id == cache.id"
+                      v-model="cache.title"
+                    />
                   </div>
                   <div>
-                    <h6>留言：{{ data.content }}</h6>
+                    <h6 v-if="data.id !== cache.id">留言：{{ data.content }}</h6>
+                    <input
+                      type="text"
+                      class="form-control"
+                      v-if="data.id == cache.id"
+                      v-model="cache.content"
+                    />
                   </div>
                 </div>
                 <div class="col-md-6 position-relative">
@@ -46,7 +59,7 @@ onMounted(() => {
               </div>
 
               <div class="col-md-3 row g-0">
-                <div class="w-50 h-100 p-1">
+                <!-- <div class="w-50 h-100 p-1">
                   <button
                     type="button"
                     class="w-100 h-100 btn btn-primary"
@@ -68,6 +81,42 @@ onMounted(() => {
                     @click="commentStore.getCacheData()"
                   >
                     刪除
+                  </button>
+                </div> -->
+                <div class="w-50 h-100 p-2" v-if="data.id !== cache.id">
+                  <button
+                    type="button"
+                    class="w-100 h-100 btn btn-primary"
+                    @click="commentStore.getCacheData(data)"
+                  >
+                    修改
+                  </button>
+                </div>
+                <div class="w-50 h-100 p-2" v-if="data.id !== cache.id">
+                  <button
+                    type="button"
+                    class="w-100 h-100 btn btn-danger"
+                    @click="commentStore.deleteComment(data.id)"
+                  >
+                    刪除
+                  </button>
+                </div>
+                <div class="w-50 h-100 p-2" v-if="data.id == cache.id">
+                  <button
+                    type="button"
+                    class="w-100 h-100 btn btn-success"
+                    @click="commentStore.editComment()"
+                  >
+                    完成
+                  </button>
+                </div>
+                <div class="w-50 h-100 p-2" v-if="data.id == cache.id">
+                  <button
+                    type="button"
+                    class="w-100 h-100 btn btn-secondary"
+                    @click="commentStore.clearCache(data)"
+                  >
+                    取消
                   </button>
                 </div>
               </div>
