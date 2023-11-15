@@ -14,6 +14,11 @@ export const useCommentStore = defineStore('commentData', {
         first_time: '',
         last_time: '',
         search_content: ''
+      },
+      cache: {
+        id: 0,
+        content: '',
+        title: ''
       }
     }
   },
@@ -35,6 +40,7 @@ export const useCommentStore = defineStore('commentData', {
       }
       axios(options).then((res) => {
         console.log(res.data.statement)
+        this.comments = []
         this.comments.push(res.data.statement)
       })
     },
@@ -67,7 +73,28 @@ export const useCommentStore = defineStore('commentData', {
           toast.setToast(error.response.data)
         })
     },
-    // 清空
+    // 獲取自身留言
+    async getSelfComment() {
+      const options = {
+        method: 'GET',
+        withCredentials: true,
+        url: 'http://localhost/2023_11_VueJS-PHP/board-api/src/Controller/Comment/GetSelfComment.php'
+      }
+      axios(options)
+        .then((res) => {
+          console.log('get self comment ok')
+          console.log(res)
+          this.comments = []
+          this.comments.push(res.data)
+        })
+        .catch((error) => {
+          console.log('create error')
+          console.log(error)
+          let toast = useToastStore()
+          toast.setToast(error.response.data)
+        })
+    },
+    // 清空搜尋
     async clearSearch() {
       this.search.first_time = ''
       this.search.last_time = ''
@@ -92,6 +119,75 @@ export const useCommentStore = defineStore('commentData', {
           this.getItems()
           this.willAdd.title = ''
           this.willAdd.content = ''
+          let toast = useToastStore()
+          toast.setToast(res.data)
+        })
+        .catch((error) => {
+          console.log('create error')
+          console.log(error)
+          let toast = useToastStore()
+          toast.setToast(error.response.data)
+        })
+    },
+    // 抓到要編輯的留言ID
+    async getCacheData(cache) {
+      this.cache.id = cache.id
+      this.cache.title = cache.title
+      this.cache.content = cache.content
+      console.log('get cache data ok ' + this.cache)
+    },
+    // 清空搜尋
+    async clearCache() {
+      this.cache = {}
+    },
+    // 更新資料
+    async editComment() {
+      const options = {
+        method: 'POST',
+        headers: { 'content-type': 'multipart/form-data' },
+        withCredentials: true,
+        data: {
+          id: this.cache.id,
+          title: this.cache.title,
+          content: this.cache.content
+        },
+        url: 'http://localhost/2023_11_VueJS-PHP/board-api/src/Controller/Comment/EditComment.php'
+      }
+      axios(options)
+        .then((res) => {
+          console.log('cditComment ok')
+          console.log(res)
+          this.comments = []
+          this.getSelfComment()
+          this.cache = {}
+          let toast = useToastStore()
+          toast.setToast(res.data)
+        })
+        .catch((error) => {
+          console.log('create error')
+          console.log(error)
+          let toast = useToastStore()
+          toast.setToast(error.response.data)
+        })
+    },
+    // 獲取自身留言
+    async deleteComment() {
+      const options = {
+        method: 'POST',
+        headers: { 'content-type': 'multipart/form-data' },
+        withCredentials: true,
+        data: {
+          id: this.cache.id,
+        },
+        url: 'http://localhost/2023_11_VueJS-PHP/board-api/src/Controller/Comment/DelComment.php'
+      }
+      axios(options)
+        .then((res) => {
+          console.log('deleteComment ok')
+          console.log(res)
+          this.comments = []
+          this.getSelfComment()
+          this.cache = {}
           let toast = useToastStore()
           toast.setToast(res.data)
         })

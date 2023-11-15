@@ -220,6 +220,25 @@ class Comment
     }
 
     /**
+     * 回傳使用者自身的留言
+     *
+     * @param   integer       $user_id     使用者 ID
+     * 
+     * @return  array    自身的留言資訊
+     */
+    public function getSelfComment($user_id)
+    {
+        $db = $this->dbConnect();
+        $sql = "SELECT * FROM comments WHERE user_id=? ORDER BY id DESC";
+        $param = [
+            $user_id
+        ];
+        $statement = $db->prepare($sql);
+        $statement->execute($param);
+        return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
      * 搜尋留言
      *
      * @param   string      $search_content     搜尋內容
