@@ -171,13 +171,13 @@ export const useCommentStore = defineStore('commentData', {
         })
     },
     // 獲取自身留言
-    async deleteComment(id) {
+    async deleteComment() {
       const options = {
         method: 'POST',
         headers: { 'content-type': 'multipart/form-data' },
         withCredentials: true,
         data: {
-          id: id
+          id: this.cache.id
         },
         url: 'http://localhost/2023_11_VueJS-PHP/board-api/src/Controller/Comment/DelComment.php'
       }
