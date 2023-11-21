@@ -1,64 +1,137 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# second-hand-books backend - Laravel 環境初始化
+### 先來確認以下事情
+#### 安裝套件
+```bash
+# 包含開發環境所需的套件
+composer install
+# 僅安裝正式環境所需的套件，而不包含開發環境所需的套件
+composer install --no-dev
+```
+#### .env 設定
+>.env 檔並不會預設就存在，因為這是整個專案的環境變數
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+```bash
+# 將 .env.example 複製成 .env
+cp .env.example .env
+```
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+#### 預設情況下，不會有 APP key
+> 透過artisan產生一組網站專屬密鑰用來確保session、password等加密資料安全性
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```bash
+# 網頁上會有這些警告
+No application encryption key has been specified.
+Your app key is missing
+Generate your application encryption key using `php artisan key:generate`.
+```
+```bash
+php artisan key:generate
+```
+>就會在 .env 產生
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
+```bash
+# 這是範例，請勿複製
+# 會在 .env 中出現這段環境變數
+APP_KEY=base64:dR4haQ8vN2TERj2M/tvUdSyC1cAZv4WbIDBCgDEzdzk=
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
+## 以下為在 Linux 的環境需要做的事情
+### storage 權限不足
+```bash
+# 會有底下類似說明的錯誤，Permission denied
+The stream or file "/home/web/public/core/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied The exception occurred while attempting to log: The stream or file "/home/web/public/core/storage/logs/laravel.log" could not be opened in append mode: Failed to open stream: Permission denied......................
+```
 
-## Laravel Sponsors
+#### 本機是開發環境可以調整檔案權限
+>將檔案權限全開啟(不安全)
+```
+chmod -R 0777 storage
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+#### 開發站、測試站、正式站皆比照正式環境辦理
+>正式環境上應該遵循「最小權限原則」
 
-### Premium Partners
+```
+chown -R www-data:www-data storage
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## 正式環境下務必
 
-## Contributing
+```bash
+APP_NAME=Laravel-SHD-Backend
+APP_ENV=local #環境變數，正式改為 production
+APP_KEY=base64:dR4haQ8vN2TERj2M/tvUdSyC1cAZv4WbIDBCgDEzdzk=
+APP_DEBUG=true #Debug用途，正式改為 false
+APP_URL=http://localhost # 主機 URL
+```
+```
+APP_NAME
+config/app.php
+預設為 Laravel-SHD-Backend
+此服務名稱
+注意同一個 Domain Name 下每一個服務的 APP_NAME 都必須不同，避免瀏覽器混淆不同網站的 Cookie Name，可能會導致 419 expired 的問題。
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+APP_ENV
+config/app.php
+預設為 production
+開發環境，用於加載不同環境時的配置
 
-## Code of Conduct
+通常為
+開發環境: local
+自動測試: testing
+產品環境: production
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+APP_DEBUG
+config/app.php
+預設為 false
+開啟時一旦發生錯誤會跳在網頁上，有可能會將重要資訊或程式碼洩漏
 
-## Security Vulnerabilities
+APP_URL
+config/app.php
+預設為 http://localhost
+為此服務預設的網頁根目錄
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 開發時幫助檢查腳本
+#### 執行腳本（開發時使用）
+```bash
+composer dev
+# 將會進行 phpcs 錯誤顏色顯示
+# phpcs 預設標準 PSR12
+# git 設定使用我們所寫的 hooks
+# 詳情指令可以看 composer.json 中的 "scripts" 的 dev
+```
 
-## License
+### 開發者幫助工具
+#### 產生套件提示
+```
+php artisan ide-helper:generate
+```
+#### 產生Model 資料庫操作提示
+```bash
+php artisan ide-helper:models
+# 要選 no ，_ide_helper_models.php 他會產生提示
+# 選 yes，會注入註解到 model，不需要麼做
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+#### 產生 swagger 文檔
+僅非 production 會產生
+
+先將設定改置網頁目錄
+```php
+L5_SWAGGER_CONST_HOST=http://{domain or ip}/{path}/public/
+```
+生 swagger 文檔
+```php
+php artisan l5-swagger:generate
+```
+
+打開網頁
+```bash
+http://{domain or ip}/{path}/public/api/documentation
+# 路徑是 config\l5-swagger.php 設定的
+```
